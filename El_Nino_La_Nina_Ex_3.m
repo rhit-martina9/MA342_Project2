@@ -4,28 +4,27 @@ clc
 clear all
 close all
 
-%Check
+%Check with Figure 10.7
 alpha=1.2;
-historyt=linspace(-10,0,1000);
 
 A=xlsread('El Nino History Data Edited.xlsx');
 
 [n_rows,n_cols]=size(A);
 
 index=1;
-for i=1:n_rows
+for i=1:n_rows-8
     for j=1:12
         histtemp(index)=A(i,j);
-        histtime(index)=A(i,j+12);
+        histtime(index)=A(i+8,j+12);
         index=index+1;
     end
 end
 
 index=1;
-for i=n_rows-10:n_rows
+for i=n_rows-18:n_rows-8
     for j=1:12
         histsplntemp(index)=A(i,j);
-        histsplntime(index)=A(i,j+12);
+        histsplntime(index)=A(i+8,j+12);
         index=index+1;
     end
 end
@@ -33,7 +32,7 @@ end
 timespan=linspace(-10,0,1000);
 Z=CubicSpline(histsplntime,histsplntemp,timespan)';
 
-%h=1
+%Historical Data
 sol1=ddesd(@(t,T,Tdel)(-alpha*Tdel+T-(T^3)),[10],@(t)(CubicSpline(histsplntime,histsplntemp,t)),[0,30]);
 
 %Plot
@@ -82,7 +81,7 @@ Z=CubicSpline(histsplntime,histsplntemp,timespan)';
 
 %Instances
 for i=1:length(alpha)
-    %h=0
+    %Historical Data
     sol1=ddesd(@(t,T,Tdel)(-alpha(i)*tanh(k(i)*Tdel(1))+beta(i)*tanh(k(i)*Tdel(2))+gamma(i)*cos(2*pi*t)),[lag1(i),lag2(i)],@(t)(CubicSpline(histsplntime,histsplntemp,t)),[0,30]);
 
     %Plot
