@@ -59,17 +59,17 @@ while(alphchange>tol && tauchange>tol && iter<MaxIter)
 
     for alpha=alphstrt:alphastep:alphend
         for tau=taustrt:taustep:tauend
-            sol1=ddesd(@(t,T,Tdel)(-alpha*Tdel+T),[tau],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
-%             sol1=ddesd(@(t,T,Tdel)(-alpha*Tdel+T-(T^3)),[tau],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
+%             sol1=ddesd(@(t,T,Tdel)(-alpha*Tdel+T),[tau],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
+            sol1=ddesd(@(t,T,Tdel)(-alpha*Tdel+T-(T^3)),[tau],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
 
             timegap=linspace(Compare_start,Compare_start+Compare_gap,comppoints);
             response=CubicSpline(sol1.x,sol1.y,timegap);
             compresp=CubicSpline(comptime,comptemp,timegap);
 
-            diff=norm(response-compresp,1);
+%             diff=norm(response-compresp,1);
 %             diff=norm(response-compresp);
 %             diff=norm(response-compresp,5); %Via Angus' suggestion
-%             diff=norm(response-compresp,"inf");
+            diff=norm(response-compresp,"inf");
 
             if diff<diffprev
                 alphabest=alpha;
@@ -102,8 +102,10 @@ while(alphchange>tol && tauchange>tol && iter<MaxIter)
     iter=iter+1;
 end
 
-solbest=ddesd(@(t,T,Tdel)(-alphabest*Tdel+T),[taubest],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
+% solbest=ddesd(@(t,T,Tdel)(-alphabest*Tdel+T),[taubest],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
+solbest=ddesd(@(t,T,Tdel)(-alphabest*Tdel+T-(T^3)),[taubest],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
 % solworst=ddesd(@(t,T,Tdel)(-alphaworst*Tdel+T),[tauworst],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
+% solworst=ddesd(@(t,T,Tdel)(-alphaworst*Tdel+T-(T^3)),[tauworst],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
 
 figure(1)
 hold on
