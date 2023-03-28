@@ -51,7 +51,7 @@ comppoints=500;
 diffprev=10e15;
 % diffworst=1;
 
-tol=0.01;
+tol=0.001;
 MaxIter=15;
 iter=1;
 
@@ -60,13 +60,15 @@ while(alphchange>tol && tauchange>tol && iter<MaxIter)
     for alpha=alphstrt:alphastep:alphend
         for tau=taustrt:taustep:tauend
             sol1=ddesd(@(t,T,Tdel)(-alpha*Tdel+T),[tau],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
+%             sol1=ddesd(@(t,T,Tdel)(-alpha*Tdel+T-(T^3)),[tau],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
 
             timegap=linspace(Compare_start,Compare_start+Compare_gap,comppoints);
             response=CubicSpline(sol1.x,sol1.y,timegap);
             compresp=CubicSpline(comptime,comptemp,timegap);
 
-%             diff=norm(response-compresp,1);
-            diff=norm(response-compresp);
+            diff=norm(response-compresp,1);
+%             diff=norm(response-compresp);
+%             diff=norm(response-compresp,5); %Via Angus' suggestion
 %             diff=norm(response-compresp,"inf");
 
             if diff<diffprev
@@ -93,6 +95,9 @@ while(alphchange>tol && tauchange>tol && iter<MaxIter)
     taustrt=0.85*taubest;
     taustep=0.75*taustep;
     tauend=1.15*taubest;
+
+    alphaprev=alphabest;
+    tauprev=taubest;
 
     iter=iter+1;
 end
