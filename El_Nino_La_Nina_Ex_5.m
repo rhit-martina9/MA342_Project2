@@ -114,4 +114,4 @@ hold off
 xlabel('Time (t)')
 ylabel('Temperatrue')
 start_time=Year_wanted+Year_gap+Compare_start;
-legend('Best Solution',sprintf("Historical Data Starting at " +start_time))
+legend(sprintf("Historical Data Starting at " +Year_wanted),'Best Solution',sprintf("Historical Data Starting at " +start_time))
