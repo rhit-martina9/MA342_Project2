@@ -7,7 +7,7 @@ close all
 Year_wanted=1950;
 Year_gap=10;
 Compare_start=0;
-Compare_gap=10;
+Compare_gap=20;
 
 A=xlsread('El Nino History Data.xlsx');
 [val,loc]=min(abs(A(:,1)-Year_wanted));
@@ -35,15 +35,15 @@ for i=1:n_rowsC
     end
 end
 
-alphstrt=1.2;
-alphastep=0.1;
-alphend=2;
+alphstrt=0;
+alphastep=0.2;
+alphend=10;
 alphaprev=5;
 alphchange=100;
 
-taustrt=0.1;
-taustep=0.1;
-tauend=1.2;
+taustrt=0;
+taustep=0.2;
+tauend=15;
 tauprev=5;
 tauchange=100;
 
@@ -52,14 +52,13 @@ diffprev=10e15;
 % diffworst=1;
 
 tol=0.001;
-MaxIter=15;
+MaxIter=8;
 iter=1;
 
 while(alphchange>tol && tauchange>tol && iter<MaxIter)
 
     for alpha=alphstrt:alphastep:alphend
         for tau=taustrt:taustep:tauend
-%             sol1=ddesd(@(t,T,Tdel)(-alpha*Tdel+T),[tau],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
             sol1=ddesd(@(t,T,Tdel)(-alpha*Tdel+T-(T^3)),[tau],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
 
             timegap=linspace(Compare_start,Compare_start+Compare_gap,comppoints);
@@ -102,9 +101,7 @@ while(alphchange>tol && tauchange>tol && iter<MaxIter)
     iter=iter+1;
 end
 
-% solbest=ddesd(@(t,T,Tdel)(-alphabest*Tdel+T),[taubest],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
 solbest=ddesd(@(t,T,Tdel)(-alphabest*Tdel+T-(T^3)),[taubest],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
-% solworst=ddesd(@(t,T,Tdel)(-alphaworst*Tdel+T),[tauworst],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
 % solworst=ddesd(@(t,T,Tdel)(-alphaworst*Tdel+T-(T^3)),[tauworst],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
 
 figure(1)
