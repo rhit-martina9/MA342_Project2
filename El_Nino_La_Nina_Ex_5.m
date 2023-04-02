@@ -7,7 +7,7 @@ close all
 Year_wanted=1950;
 Year_gap=10;
 Compare_start=0;
-Compare_gap=20;
+Compare_gap=10;
 
 A=xlsread('El Nino History Data.xlsx');
 [val,loc]=min(abs(A(:,1)-Year_wanted));
@@ -36,24 +36,26 @@ for i=1:n_rowsC
 end
 
 alphstrt=0;
-alphastep=0.2;
-alphend=10;
+alphastep=0.1;
+alphend=15;
 alphaprev=5;
 alphchange=100;
 
 taustrt=0;
-taustep=0.2;
+taustep=0.1;
 tauend=15;
 tauprev=5;
 tauchange=100;
 
 comppoints=500;
 diffprev=10e15;
-% diffworst=1;
 
 tol=0.001;
-MaxIter=8;
+MaxIter=3;
 iter=1;
+
+timegap=linspace(Compare_start,Compare_start+Compare_gap,comppoints);
+compresp=CubicSpline(comptime,comptemp,timegap);
 
 while(alphchange>tol && tauchange>tol && iter<MaxIter)
 
@@ -61,26 +63,17 @@ while(alphchange>tol && tauchange>tol && iter<MaxIter)
         for tau=taustrt:taustep:tauend
             sol1=ddesd(@(t,T,Tdel)(-alpha*Tdel+T-(T^3)),[tau],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
 
-            timegap=linspace(Compare_start,Compare_start+Compare_gap,comppoints);
             response=CubicSpline(sol1.x,sol1.y,timegap);
-            compresp=CubicSpline(comptime,comptemp,timegap);
 
-%             diff=norm(response-compresp,1);
-%             diff=norm(response-compresp);
-%             diff=norm(response-compresp,5); %Via Angus' suggestion
-            diff=norm(response-compresp,"inf");
+            diff=norm(abs(response-compresp),1);
+%             diff=norm(abs(response-compresp));
+%             diff=norm(abs(response-compresp),"inf");
 
             if diff<diffprev
                 alphabest=alpha;
                 taubest=tau;
                 diffprev=diff;
             end
-
-%             if diff>diffworst
-%                 alphaworst=alpha;
-%                 tauworst=tau;
-%                 diffworst=diff;
-%             end
         end
     end
 
@@ -88,11 +81,11 @@ while(alphchange>tol && tauchange>tol && iter<MaxIter)
     tauchange=abs(tauprev-taubest);
 
     alphstrt=0.85*alphabest;
-    alphastep=0.75*alphastep;
+    alphastep=0.85*alphastep;
     alphend=1.15*alphabest;
 
     taustrt=0.85*taubest;
-    taustep=0.75*taustep;
+    taustep=0.85*taustep;
     tauend=1.15*taubest;
 
     alphaprev=alphabest;
@@ -102,13 +95,12 @@ while(alphchange>tol && tauchange>tol && iter<MaxIter)
 end
 
 solbest=ddesd(@(t,T,Tdel)(-alphabest*Tdel+T-(T^3)),[taubest],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
-% solworst=ddesd(@(t,T,Tdel)(-alphaworst*Tdel+T-(T^3)),[tauworst],@(t)(CubicSpline(histtime,histtemp,t)),[Compare_start,Compare_start+Compare_gap]);
 
 figure(1)
 hold on
 plot(histtime,histtemp,'kx')
 plot(solbest.x,solbest.y,'b-')
-plot(comptime,comptemp,'k.')
+plot(comptime,comptemp,'k--')
 hold off
 xlabel('Time (t)')
 ylabel('Temperatrue')
