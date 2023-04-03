@@ -5,7 +5,7 @@ lifespan = 10;
 lag = [vaccines lifespan];
 history = [3*10^(7); 30; 28];
 options = odeset('NormControl', 'on', 'MaxStep', 1);
-endStep = 1200;
+endStep = 200;
 
 sol_old  = dde23(@(t,P,Pdel) calcDP(t,P,Pdel,  [],-1,lag),lag,history,[0,endStep],options);
 
@@ -75,7 +75,7 @@ hold on
 plot(sol11.x,sol11.y(2,:),'--k');
 plot(sol12.x,sol12.y(2,:),'k');
 
-%title("SIR Model (Infected) with vaccines");
+title("SIR Model (Infected) with vaccines");
 ylabel("Population");
 xlabel("Time (t)");
 %legend("Infected, u=0.01","Infected, u=0.02");
@@ -86,7 +86,7 @@ figure;
 hold on
 plot(sol2.x,sol2.y(1,:),'g',sol2.x,sol2.y(3,:),'r');
 
-%title("SIR Model (Susceptible/Recovered) with disease lifespan");
+title("SIR Model (Susceptible/Recovered) with disease lifespan");
 ylabel("Population");
 xlabel("Time (t)");
 %legend("Susceptible","Recovered");
@@ -96,7 +96,7 @@ figure;
 hold on
 plot(sol2.x,sol2.y(2,:),'k');
 
-%title("SIR Model (Infected) with disease lifespan");
+title("SIR Model (Infected) with disease lifespan");
 ylabel("Population");
 xlabel("Time (t)");
 %legend("Infected");
@@ -108,7 +108,7 @@ hold on
 plot(sol31.x,sol31.y(1,:),'--g',sol31.x,sol31.y(3,:),'--r');
 plot(sol32.x,sol32.y(1,:),  'g',sol32.x,sol32.y(3,:),  'r');
 
-%title("SIR Model (Susceptible/Recovered) with vaccines and lifespan");
+title("SIR Model (Susceptible/Recovered) with vaccines and lifespan");
 ylabel("Population");
 xlabel("Time (t)");
 %legend("Susceptible, u=0.01","Recovered, u=0.01", "Susceptible, u=0.02","Recovered, u=0.02");
@@ -119,7 +119,7 @@ hold on
 plot(sol31.x,sol31.y(2,:),'--k');
 plot(sol32.x,sol32.y(2,:),'k');
 
-%title("SIR Model (Infected) with vaccines and lifespan");
+title("SIR Model (Infected) with vaccines and lifespan");
 ylabel("Population");
 xlabel("Time (t)");
 %legend("Infected, u=0.01","Infected, u=0.02");
